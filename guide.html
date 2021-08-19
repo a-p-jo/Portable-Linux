@@ -1,0 +1,84 @@
+<h1 id="portable-linux-v2">Portable Linux v2</h1>
+<h3 id="prologue-">Prologue :</h3>
+<p>This is a fairly quick yet comprehensive guide to setting up a <a href="https://en.wikipedia.org/wiki/Linux_distribution">linux distribution</a> install to be portable. We will get <a href="https://en.wikipedia.org/wiki/GNU_GRUB">GRUB</a> to boot linux on <a href="https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface">UEFI and BIOS</a> to achieve this.</p>
+<p>The guide is step-by-step and does not presume much prior knowledge of Linux. It has been tested on <a href="https://ubuntu.com/download/desktop">Ubuntu Desktop</a> <code>20.04</code> and <a href="https://manjaro.org/download">Manjaro</a>, but ought to work on any distro. If you find any bugs or have issues following the guide or wish to critique this material, post it as an issue in <a href="https://github.com/a-p-jo">the GitHub repo</a>.</p>
+<p><strong>Requirements :</strong></p>
+<ol type="1">
+<li>The install media (USB stick, DVD, ...) with the desired ISO <a href="https://medium.com/the-blog-of-ehsan-nazim/how-to-make-linux-isos-bootable-from-usb-flash-drive-the-command-line-way-380fca04e096">flashed</a> to it.</li>
+<li>Computer(s) with BIOS and UEFI boot options.</li>
+<li>Internet connection, ideally a wired ethernet connection for minimal hassle, but most WiFi shoud just work.</li>
+</ol>
+<h3 id="install-guide">Install Guide</h3>
+<ol type="1">
+<li><p>Boot from the install media in <strong>BIOS/Legacy</strong> mode.</p>
+<p>How exactly you do this varies by manufacturers &amp; models. Try to search the web for <code>&lt;your_computer&gt;</code> or <code>&lt;your_motherboard_model&gt;</code> + <code>boot options menu</code>. After boot-up, connect/insert the target device to your computer.</p></li>
+<li><p>We will use GParted, a standard disk partitioning utility that may come prebuilt in your system.</p>
+<p>Open a <a href="https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal">terminal</a> window, type the <code>gparted</code> command at the prompt and hit the ENTER key to execute it.</p>
+<p>If you get an error message like <code>command not found</code> or similar, then you may need to install the tool.</p>
+<p>Install instructions vary by distribution :</p>
+<ul>
+<li>For Debain &amp; Debian-based distros, like Ubuntu/Mint/PopOS/Zorin , execute <code>sudo apt install gparted</code>.</li>
+<li>For an Arch based distro, like Manjaro/Endevour/Garuda/Arco, execute <code>sudo pacman -S gparted</code>.</li>
+<li>For others, consult distro wikis or documentation on how to install packages or just search the web.</li>
+</ul>
+<p>Otherwise, you can also use various <a href="https://alternativeto.net/software/gparted/?platform=linux">alternatives</a> to do the same job if you know how to use them.</p></li>
+<li><p>Launch Gparted.</p>
+<p>Change the dropdown menu in the top right-hand corner to select your target device. Right click any existing mounted partitions on said target USB and unmount/swapoff them.</p></li>
+<li><p>Click <code>Device</code> on the top bar, and click <code>Create partition table</code>. Change the dropdown to <code>GPT</code> (<strong>note:</strong> this will erase <em>all</em> data on the disk, ensure data is backed up to your satisfaction <em>first!</em>).</p></li>
+<li><p>Right click the disk representation to create a new partition. The size should be <strong>1MB</strong> and the file system should be <strong>unformatted</strong>. Similarly create another partition of size <strong>100MB</strong> and file system <strong>FAT32</strong>. Create one last partition, which will be used as the root filesystem of your installation. The size can be all the space left on your disk, but ideally not less than 10 GB. File system should be <strong>ext4</strong>.</p>
+<p>If you leave some space remaining, you can use it for other things or extend the root partition later in GParted if needed. However, once allocated to root, shrinking the partition is not so simple.</p>
+<p>Apply the changes by clicking the tick button.</p></li>
+<li><p>Right click the 1MB partition, select <code>Manage flags</code>, and select <code>bios_grub</code>. Similarly set <code>boot</code> and <code>esp</code> flags for the 100MB partition.</p>
+<p>Then, close GParted.</p></li>
+<li><p>Open your distro's installation program. Proceed normally until asked which disk to install to. In the disk selection section, select the <code>Manual Partitioning</code> or <code>Advanced</code> or a similar option. Set the ext4 partition as the <strong>root partition</strong> (mount point = <code>/</code>).</p>
+<p>If the option is availible, don't forget to change the bootloader dropdown to your target drive !</p>
+<p>Confirm/Continue and finish the rest of the install. Then, reboot.</p></li>
+<li><p>Boot from your installation media again, this time in UEFI mode, and connect target device again. Open a terminal and execute <code>su</code> to swtich to root user.</p></li>
+<li><p>Run <code>fdisk -l</code>. Take note of the <code>/dev/sdX</code> label of your target drive, it will probably be something like <code>/dev/sdb</code> or <code>/dev/sdc</code>. In these next commands, <code>/dev/sdX</code> will refer to your target. Make sure you substitute the <code>X</code> for the actual letter shown for your one!</p></li>
+<li><p>Execute the below commands :</p></li>
+</ol>
+<p><em>Note</em> : The <code>#</code> denotes a <a href="https://bash.cyberciti.biz/guide/Shell_Comments">comment</a>. These need not be copied &amp; pasted to the terminal. They are simply for your refrence.</p>
+<pre class="shell"><code>umount /dev/sdX3 # Make sure root is unmounted
+umount /dev/sdX2 # Make sure 100MB partition is unmounted.
+mount /dev/sdX3 /mnt
+mkdir -p /mnt/boot/efi
+mount /dev/sdX2 /mnt/boot/efi
+mount --bind /dev /mnt/dev
+mount --bind /dev/pts /mnt/dev/pts
+mount -t proc proc /mnt/proc
+mount -t sysfs sysfs /mnt/sys
+mount -t tmpfs tmpfs /mnt/run
+chroot /mnt
+grub-install --efi-directory=/boot/efi --target=x86_64-efi --removable # Replace x86_64-efi to i386-efi for 32-bit system
+update-grub
+blkid | grep /dev/sdX2 # Note UUID, which is in format XXXX-XXXX.
+echo &quot;UUID=XXXX-XXXX /boot/efi vfat umask=0077 0 1&quot; &gt;&gt; /etc/fstab
+sync
+exit
+sync
+poweroff</code></pre>
+<p><code>poweroff</code> will cause an immediate shutdown. You can now boot from the target device on both UEFI and BIOS systems.</p>
+<h3 id="post-install">Post Install</h3>
+<ul>
+<li><p>You may wish to install proprietary drivers to allow important functionality like graphics or networking. For example, you may want to install the Nvidia drivers or wireless drivers for macs, etc. depending on what you need.</p></li>
+<li><p>If your target device was a USB stick, SD card, or SSD, then it is advisable to set the system to not make unnecessary writes.</p>
+<ol type="1">
+<li><p>Systemd Journald</p>
+<p>Open <code>/etc/systemd/journald.conf</code> in a text editor as root, for example <code>sudo nano /etc/systemd/journald.conf</code>. Uncomment/add <code>Storage=volatile</code>. Uncomment/add <code> SystemMaxUse=16M</code>.</p></li>
+<li><p>Fstab mount options</p>
+<p>Open <code>/etc/fstab</code> in a text editor as root. Find the line for the <code>/</code> ext4 partition. Find the mount options, they may look like <code>defaults</code>. If not already present, append <code>,noatime</code> to the options for <code>/</code>.</p></li>
+</ol></li>
+<li><p>Make sure to do a system upgrade ! On a debian-based system, execute <code>sudo apt update &amp;&amp; sudo apt upgrade</code></p>
+<p>On an Arch-based system, execute <code>sudo pacman -Syu</code></p></li>
+</ul>
+<h3 id="epilogue-">Epilogue :</h3>
+<ul>
+<li>Thanks to <a href="https://askubuntu.com/a/1253617/1098871">Daniel Masey</a> for answering my original AskUbuntu question. Installation steps 2-10 are abridged versions of his answer.</li>
+<li>See also :
+<ol type="1">
+<li><a href="https://wiki.archlinux.org/title/Install_Arch_Linux_on_a_removable_medium">Archwiki page</a></li>
+<li><a href="https://mags.nsupdate.info/arch-usb.html">c-magyar's guide</a></li>
+<li>Mac wifi hw docs for <a href="https://wiki.debian.org/MacBook/Wireless">Debian-based</a>, <a href="https://askubuntu.com/questions/55868/installing-broadcom-wireless-drivers?page=1&amp;tab=votes#tab-top">Ubuntu</a> and <a href="https://wiki.archlinux.org/title/broadcom_wireless">Arch-based</a></li>
+<li>Nvidia graphics docs for <a href="https://wiki.debian.org/NvidiaGraphicsDrivers">Debian-based</a> and <a href="https://wiki.archlinux.org/title/NVIDIA">Arch-based</a></li>
+</ol></li>
+</ul>
