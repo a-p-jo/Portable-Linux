@@ -10,15 +10,15 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
 
 **Requirements :**
 1. The install media (USB stick, DVD, ...) with the desired ISO [flashed](medium.com/the-blog-of-ehsan-nazim/how-to-make-linux-isos-bootable-from-usb-flash-drive-the-command-line-way-380fca04e096) to it.
-3. Computer(s) with BIOS and UEFI boot options.
-4. Internet connection, ideally a wired ethernet connection for minimal hassle, but most WiFi shoud just work.
+2. Computer(s) with BIOS and UEFI boot options.
+3. Internet connection, ideally a wired ethernet connection for minimal hassle, but most WiFi shoud just work.
 ### Install Guide
-0. Boot from the install media in **BIOS/Legacy** mode. 
+1. Boot from the install media in **BIOS/Legacy** mode. 
    
    How exactly you do this varies by manufacturers & models.
    Try to search the web for `<your_computer>` or `<your_motherboard_model>` + `boot options menu`.
    After boot-up, connect/insert the target device to your computer.
-1. We will use GParted, a standard disk partitioning utility that may come prebuilt in your system.
+2. We will use GParted, a standard disk partitioning utility that may come prebuilt in your system.
 
    Open a [terminal](ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) window, type the `gparted` command at the prompt and hit the ENTER key to execute it.
    
@@ -31,15 +31,15 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
    
    Otherwise, you can also use various [alternatives](alternativeto.net/software/gparted/?platform=linux) to do the same job if you know how to use them.
    
-2. Launch Gparted. 
+3. Launch Gparted. 
    
    Change the dropdown menu in the top right-hand corner to select
    your target device. Right click any existing mounted partitions on said target USB and unmount/swapoff
    them.
-3. Click `Device` on the top bar, and click `Create partition table`. Change the
+4. Click `Device` on the top bar, and click `Create partition table`. Change the
    dropdown to `GPT` (**note:** this will erase *all* data on the disk, ensure data is backed
    up to your satisfaction *first!*).
-4. Right click the disk representation to create a new partition. The size should be **1MB** and the file system should be
+5. Right click the disk representation to create a new partition. The size should be **1MB** and the file system should be
    **unformatted**.
    Similarly create another partition of size **100MB** and file system **FAT32**.
    Create one last partition, which will be used as the root filesystem of your installation.
@@ -51,24 +51,24 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
    However, once allocated to root, shrinking the partition is not so simple.
   
    Apply the changes by clicking the tick button.
-5. Right click the 1MB partition, select `Manage flags`, and select `bios_grub`.
+6. Right click the 1MB partition, select `Manage flags`, and select `bios_grub`.
    Similarly set `boot` and `esp` flags for the 100MB partition.
    
    Then, close GParted.
-6. Open your distro's installation program. Proceed normally until asked which disk to install to.
+7. Open your distro's installation program. Proceed normally until asked which disk to install to.
     In the disk selection section, select the `Manual Partitioning` or `Advanced` or a similar option.
     Set the ext4 partition as the **root partition** (mount point = `/`).
     
     If the option is availible, don't forget to change the bootloader dropdown to your target drive !
     
     Confirm/Continue and finish the rest of the install. Then, reboot.
-7. Boot from your installation media again, this time in UEFI mode, and connect target device again.
+8. Boot from your installation media again, this time in UEFI mode, and connect target device again.
    Open a terminal and execute `su` to swtich to root user.
-8. Run `fdisk -l`. Take note of the `/dev/sdX` label of your target drive, it will
+9. Run `fdisk -l`. Take note of the `/dev/sdX` label of your target drive, it will
    probably be something like `/dev/sdb` or `/dev/sdc`. 
    In these next commands, `/dev/sdX` will refer to your target.
    Make sure you substitute the `X` for the actual letter shown for your one!
-9. Execute the below commands :
+10. Execute the below commands :
 
    *Note* : The `#` denotes a [comment](bash.cyberciti.biz/guide/Shell_Comments). These need not be copied & pasted to the terminal.
    They are simply for your refrence.
@@ -116,7 +116,7 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
   
   On an Arch-based system, execute  `sudo pacman -Syu`
 ### Epilogue :
-- Thanks to [Daniel Masey](askubuntu.com/a/1253617/1098871) for answering my original AskUbuntu question. Installation steps 1-9 are abridged versions of his answer.
+- Thanks to [Daniel Masey](askubuntu.com/a/1253617/1098871) for answering my original AskUbuntu question. Installation steps 2-10 are abridged versions of his answer.
 - See also : 
   1. [Archwiki page](wiki.archlinux.org/title/Install_Arch_Linux_on_a_removable_medium)
   2. [c-magyar's guide](mags.nsupdate.info/arch-usb.html)
