@@ -1,15 +1,15 @@
 # Portable Linux v2
 ### Prologue :
-This is a fairly quick yet comprehensive guide to setting up a [linux distribution](en.wikipedia.org/wiki/Linux_distribution) install to be portable.
-We will get [GRUB](en.wikipedia.org/wiki/GNU_GRUB) to boot linux on [UEFI and BIOS](https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface) to achieve this.
+This is a fairly quick yet comprehensive guide to setting up a [linux distribution](https://en.wikipedia.org/wiki/Linux_distribution) install to be portable.
+We will get [GRUB](https://en.wikipedia.org/wiki/GNU_GRUB) to boot linux on [UEFI and BIOS](https://wiki.archlinux.org/title/Unified_Extensible_Firmware_Interface) to achieve this.
 
 The guide is step-by-step and does not presume much prior knowledge of Linux.
-It has been tested on [Ubuntu Desktop](ubuntu.com/download/desktop) `20.04` and [Manjaro](manjaro.org/download),
+It has been tested on [Ubuntu Desktop](https://ubuntu.com/download/desktop) `20.04` and [Manjaro](https://manjaro.org/download),
 but ought to work on any distro. If you find any bugs or have issues following the guide or wish to critique this material,
-post it as an issue in [the GitHub repo](github.com/a-p-jo).
+post it as an issue in [the GitHub repo](https://github.com/a-p-jo).
 
 **Requirements :**
-1. The install media (USB stick, DVD, ...) with the desired ISO [flashed](medium.com/the-blog-of-ehsan-nazim/how-to-make-linux-isos-bootable-from-usb-flash-drive-the-command-line-way-380fca04e096) to it.
+1. The install media (USB stick, DVD, ...) with the desired ISO [flashed](https://medium.com/the-blog-of-ehsan-nazim/how-to-make-linux-isos-bootable-from-usb-flash-drive-the-command-line-way-380fca04e096) to it.
 2. Computer(s) with BIOS and UEFI boot options.
 3. Internet connection, ideally a wired ethernet connection for minimal hassle, but most WiFi shoud just work.
 ### Install Guide
@@ -20,7 +20,7 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
    After boot-up, connect/insert the target device to your computer.
 2. We will use GParted, a standard disk partitioning utility that may come prebuilt in your system.
 
-   Open a [terminal](ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) window, type the `gparted` command at the prompt and hit the ENTER key to execute it.
+   Open a [terminal](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) window, type the `gparted` command at the prompt and hit the ENTER key to execute it.
    
    If you get an error message like `command not found` or similar, then you may need to install the tool.
    
@@ -29,7 +29,7 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
    - For an Arch based distro, like Manjaro/Endevour/Garuda/Arco, execute `sudo pacman -S gparted`.
    - For others, consult distro wikis or documentation on how to install packages or just search the web.
    
-   Otherwise, you can also use various [alternatives](alternativeto.net/software/gparted/?platform=linux) to do the same job if you know how to use them.
+   Otherwise, you can also use various [alternatives](https://alternativeto.net/software/gparted/?platform=linux) to do the same job if you know how to use them.
    
 3. Launch Gparted. 
    
@@ -70,7 +70,7 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
    Make sure you substitute the `X` for the actual letter shown for your one!
 10. Execute the below commands :
 
-   *Note* : The `#` denotes a [comment](bash.cyberciti.biz/guide/Shell_Comments). These need not be copied & pasted to the terminal.
+   *Note* : The `#` denotes a [comment](https://bash.cyberciti.biz/guide/Shell_Comments). These need not be copied & pasted to the terminal.
    They are simply for your refrence.
    ```shell
    umount /dev/sdX3 # Make sure root is unmounted
@@ -116,9 +116,9 @@ post it as an issue in [the GitHub repo](github.com/a-p-jo).
   
   On an Arch-based system, execute  `sudo pacman -Syu`
 ### Epilogue :
-- Thanks to [Daniel Masey](askubuntu.com/a/1253617/1098871) for answering my original AskUbuntu question. Installation steps 2-10 are abridged versions of his answer.
+- Thanks to [Daniel Masey](https://askubuntu.com/a/1253617/1098871) for answering my original AskUbuntu question. Installation steps 2-10 are abridged versions of his answer.
 - See also : 
-  1. [Archwiki page](wiki.archlinux.org/title/Install_Arch_Linux_on_a_removable_medium)
-  2. [c-magyar's guide](mags.nsupdate.info/arch-usb.html)
-  3. Mac wifi hw docs for [Debian-based](wiki.debian.org/MacBook/Wireless), [Ubuntu](askubuntu.com/questions/55868/installing-broadcom-wireless-drivers?page=1&tab=votes#tab-top) and [Arch-based](wiki.archlinux.org/title/broadcom_wireless)
-  4. Nvidia graphics docs for [Debian-based](wiki.debian.org/NvidiaGraphicsDrivers) and [Arch-based](wiki.archlinux.org/title/NVIDIA)
+  1. [Archwiki page](https://wiki.archlinux.org/title/Install_Arch_Linux_on_a_removable_medium)
+  2. [c-magyar's guide](https://mags.nsupdate.info/arch-usb.html)
+  3. Mac wifi hw docs for [Debian-based](https://wiki.debian.org/MacBook/Wireless), [Ubuntu](https://askubuntu.com/questions/55868/installing-broadcom-wireless-drivers?page=1&tab=votes#tab-top) and [Arch-based](https://wiki.archlinux.org/title/broadcom_wireless)
+  4. Nvidia graphics docs for [Debian-based](https://wiki.debian.org/NvidiaGraphicsDrivers) and [Arch-based](https://wiki.archlinux.org/title/NVIDIA)
